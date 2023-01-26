@@ -44,6 +44,8 @@ class Planet:
 
     Lines = True
 
+    your_limit = 3000
+
 
     def __init__(self, x, y, radius, color, mass):
         self.color = color
@@ -53,12 +55,9 @@ class Planet:
         self.y = y
         self.orbit = []
         self.sun = False
-        self.distance_to_sun = 0
 
         self.x_vel = 0
         self.y_vel = 0
-
-
 
     def draw(self, win):
         x = self.x * self.SCALE + WIDTH / 2
@@ -66,15 +65,35 @@ class Planet:
 
         if len(self.orbit) > 2 and Planet.Lines == True: 
             updated_points = []
+
             
+            
+
             for point in self.orbit:
+
                 x, y = point
-                x = x * self.SCALE + WIDTH / 2
-                y = y * self.SCALE + HEIGHT / 2
-                updated_points.append((x, y))
 
 
-            pygame.draw.lines(win, self.color, False, updated_points, 2)
+                x = (x * self.SCALE + WIDTH / 2)
+                y = (y * self.SCALE + HEIGHT / 2)
+
+
+                updated_points.append((x, y))  
+
+
+
+
+
+                if len(updated_points) > Planet.your_limit:
+                    del updated_points[0:Planet.your_limit - 2]
+
+            if len(updated_points) < Planet.your_limit:
+                pygame.draw.lines(win, self.color, False, updated_points, 1)
+
+                
+                
+
+
 
         pygame.draw.circle(win, self.color, (x, y), self.radius * Planet.Decrease)
 
@@ -85,8 +104,6 @@ class Planet:
         distance_x = other_x - self.x
         distance_y = other_y - self.y
         distance = math.sqrt(distance_x ** 2 + distance_y ** 2)
-
-
 
         force = self.G * self.mass * other.mass / distance**2
         theta = math.atan2(distance_y, distance_x)
@@ -114,9 +131,9 @@ class Planet:
         self.orbit.append((self.x, self.y))
 
 
-def main():
-    run = True
-    clock = pygame.time.Clock()
+class Planets:
+
+    
 
     sun = Planet(0, 0, 30, YELLOW, 1.98892*10**30)
     sun.sun = True
@@ -147,6 +164,12 @@ def main():
     
     planets = [sun, earth, mars, mercury, venus, jupyter, saturn, uranus, neptune]
 
+
+
+
+def main():
+    run = True
+    clock = pygame.time.Clock()
     while run:
         clock.tick(60)
         WIN.fill((0, 0, 0))
@@ -185,8 +208,8 @@ def main():
         
         
 
-        for planet in planets:
-            planet.update_position(planets)
+        for planet in Planets.planets:
+            planet.update_position(Planets.planets)
             planet.draw(WIN)
 
         
