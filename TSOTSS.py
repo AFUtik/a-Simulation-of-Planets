@@ -180,9 +180,9 @@ def main():
             increases_speed_of_time = pygame.key.get_pressed()
 
             decreases_speed_of_time = pygame.key.get_pressed()
-            if increases_speed_of_time[pygame.K_x]:
+            if increases_speed_of_time[pygame.K_x] and (Planet.TIMESTEP) < (4 * 3600*24):
                 Planet.TIMESTEP *= 2
-            if decreases_speed_of_time[pygame.K_z]:
+            if decreases_speed_of_time[pygame.K_z] and (Planet.TIMESTEP) > 0:
                 Planet.TIMESTEP /= 2
 
 
