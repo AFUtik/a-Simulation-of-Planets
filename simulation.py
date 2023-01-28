@@ -1,8 +1,6 @@
 
-
 import pygame
 import math
-import time
 pygame.init()
 
 
@@ -23,19 +21,11 @@ GRAY = (58, 54, 60)
 
 
 
-FONT = pygame.font.SysFont("comicsans", 16)
-
-#theta = math.atan2(distance_y, distance_x)#
-
-
-
 class Planet:
 
     G = 6.67428e-11
 
     AU = 149.6e6 * 1000
-    
-    LY = 9.461e+12 #Light Year
 
     TIMESTEP = 3600*24
 
@@ -44,8 +34,6 @@ class Planet:
     Decrease = 1
 
     Lines = True
-
-    clear = False
 
     your_limit = 3000
 
@@ -61,6 +49,8 @@ class Planet:
 
         self.x_vel = 0
         self.y_vel = 0
+
+
 
     def draw(self, win):
         x = self.x * self.SCALE + WIDTH / 2
@@ -98,10 +88,6 @@ class Planet:
         distance_x = other_x - self.x
         distance_y = other_y - self.y
         distance = math.sqrt(distance_x ** 2 + distance_y ** 2)
-
-
-        if distance == 0:
-            distance = 0.1
 
         force = self.G * self.mass * other.mass / distance**2
         theta = math.atan2(distance_y, distance_x)
@@ -180,7 +166,7 @@ def main():
         for event in pygame.event.get():
            
 
-            #planet
+            #create the planets
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 start = True
                 sp = event.pos
@@ -213,8 +199,8 @@ def main():
 
                 your_planet = Planet(-x, -y, width / 2, GRAY, mass)
 
-                your_planet.x_vel = 4.1 * 1000
-                your_planet.y_vel = 4.1 * 1000
+                your_planet.x_vel = 23.1 * 1000
+                your_planet.y_vel = 3.1 * 1000
 
                 Planets.planets.append(your_planet)
 
