@@ -2,6 +2,7 @@
 
 import pygame
 import math
+import time
 pygame.init()
 
 
@@ -44,6 +45,8 @@ class Planet:
 
     Lines = True
 
+    clear = False
+
     your_limit = 3000
 
 
@@ -66,9 +69,6 @@ class Planet:
         if len(self.orbit) > 2 and Planet.Lines == True: 
             updated_points = []
 
-            
-            
-
             for point in self.orbit:
 
                 x, y = point
@@ -80,18 +80,12 @@ class Planet:
 
                 updated_points.append((x, y))  
 
-
-
-
-
                 if len(updated_points) > Planet.your_limit:
                     del updated_points[0:Planet.your_limit - 2]
 
             if len(updated_points) < Planet.your_limit:
                 pygame.draw.lines(win, self.color, False, updated_points, 1)
 
-                
-                
 
 
 
@@ -104,6 +98,10 @@ class Planet:
         distance_x = other_x - self.x
         distance_y = other_y - self.y
         distance = math.sqrt(distance_x ** 2 + distance_y ** 2)
+
+
+        if distance == 0:
+            distance = 0.1
 
         force = self.G * self.mass * other.mass / distance**2
         theta = math.atan2(distance_y, distance_x)
@@ -161,6 +159,8 @@ class Planets:
     
     neptune = Planet(30.06 * Planet.AU, 0, 14, DEEP_BLUE, 24.622*10**6)
     neptune.y_vel = 5.4349 * 1000
+
+
     
     planets = [sun, earth, mars, mercury, venus, jupyter, saturn, uranus, neptune]
 
@@ -168,13 +168,59 @@ class Planets:
 
 
 def main():
+    start = False
     run = True
+
+
     clock = pygame.time.Clock()
     while run:
         clock.tick(60)
         WIN.fill((0, 0, 0))
-
+        
         for event in pygame.event.get():
+           
+
+            #planet
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                start = True
+                sp = event.pos
+
+            
+
+            elif event.type == pygame.MOUSEMOTION:
+                if start == True and event.type:
+
+
+                    pos = event.pos
+
+
+                    width = pos[0] - sp[0]
+
+                    pygame.draw.circle(WIN, GRAY, (sp[0], sp[1]), width / 2)
+
+                    S = (4 * math.pi) * (((width / 2 * Planet.AU) / 10000000)) ** 2
+
+                    mass = (1880) * S**2
+
+
+
+
+
+            elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                
+                x = (((WIDTH / 2) - sp[0]) / Planet.SCALE) 
+                y = (((HEIGHT / 2) - sp[1]) / Planet.SCALE) 
+
+                your_planet = Planet(-x, -y, width / 2, GRAY, mass)
+
+                your_planet.x_vel = 4.1 * 1000
+                your_planet.y_vel = 4.1 * 1000
+
+                Planets.planets.append(your_planet)
+
+                start = False
+
+
 
             #TIME
             increases_speed_of_time = pygame.key.get_pressed()
