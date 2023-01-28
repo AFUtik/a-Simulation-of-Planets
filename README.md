@@ -36,7 +36,8 @@ or you want to add a planet to the solar system find class Planets and create Pl
 
 that's example
 
-planet = Planet(x, y, radius, color, mass)
+planet = Planet(x, y, radius, color, mass)                           
+if you pass value only on axis x: planet.y_vel = Your_speed or if you pass value only on axis y: planet.x_vel = Your_speed 
 
 ![image](https://user-images.githubusercontent.com/105744368/215286789-3ed5a3f8-5cfb-4745-ada1-94c1dcd07d7c.png)
 
