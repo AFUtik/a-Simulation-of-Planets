@@ -1,4 +1,2 @@
-/_pycache
-/bin
-/obj
+/__pycache__
 The simulation of the solar system.py
