@@ -36,6 +36,8 @@ or you want to add a planet to the solar system find class Planets and create Pl
 
 that's example
 
+planet = Planet(x, y, radius, color, mass)
+
 ![image](https://user-images.githubusercontent.com/105744368/215286789-3ed5a3f8-5cfb-4745-ada1-94c1dcd07d7c.png)
 
 then add the varible to the list
