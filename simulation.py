@@ -1,6 +1,8 @@
-
 import pygame
 import math
+
+from typing import Tuple
+
 pygame.init()
 
 
@@ -20,25 +22,16 @@ DEEP_BLUE = (62, 63, 190)
 GRAY = (58, 54, 60)
 
 
-
 class Planet:
-
     G = 6.67428e-11
-
     AU = 149.6e6 * 1000
-
     TIMESTEP = 3600*24
-
     SCALE = 150 / AU
+    DECREASE = 1
+    LINES = True
+    YOUR_LIMIT = 3000
 
-    Decrease = 1
-
-    Lines = True
-
-    your_limit = 3000
-
-
-    def __init__(self, x, y, radius, color, mass):
+    def __init__(self, x: float, y: float, radius: int, color: Tuple[int, int, int], mass: float):
         self.color = color
         self.radius = radius
         self.mass = mass
@@ -50,38 +43,27 @@ class Planet:
         self.x_vel = 0
         self.y_vel = 0
 
-
-
-    def draw(self, win):
+    def draw(self, win: pygame.Surface):
         x = self.x * self.SCALE + WIDTH / 2
         y = self.y * self.SCALE + HEIGHT / 2
 
-        if len(self.orbit) > 2 and Planet.Lines == True: 
+        if len(self.orbit) > 2 and Planet.LINES == True: 
             updated_points = []
-
             for point in self.orbit:
-
                 x, y = point
-
 
                 x = (x * self.SCALE + WIDTH / 2)
                 y = (y * self.SCALE + HEIGHT / 2)
 
-
                 updated_points.append((x, y))  
 
-                if len(updated_points) > Planet.your_limit:
-                    del updated_points[0:Planet.your_limit - 2]
+                if len(updated_points) > Planet.YOUR_LIMIT:
+                    del updated_points[0:Planet.YOUR_LIMIT - 2]
 
-            if len(updated_points) < Planet.your_limit:
+            if len(updated_points) < Planet.YOUR_LIMIT:
                 pygame.draw.lines(win, self.color, False, updated_points, 1)
 
-
-
-
-        pygame.draw.circle(win, self.color, (x, y), self.radius * Planet.Decrease)
-
-
+        pygame.draw.circle(win, self.color, (x, y), self.radius * Planet.DECREASE)
 
     def attraction(self, other):
         other_x, other_y = other.x, other.y
@@ -94,8 +76,6 @@ class Planet:
         force_x = math.cos(theta) * force
         force_y = math.sin(theta) * force
         return force_x, force_y
-
-
 
     def update_position(self, planets):
         total_fx = total_fy = 0
@@ -116,9 +96,6 @@ class Planet:
 
 
 class Planets:
-
-    
-
     sun = Planet(0, 0, 30, YELLOW, 1.98892*10**30)
     sun.sun = True
     
@@ -145,18 +122,12 @@ class Planets:
     
     neptune = Planet(30.06 * Planet.AU, 0, 14, DEEP_BLUE, 24.622*10**6)
     neptune.y_vel = 5.4349 * 1000
-
-
     
     planets = [sun, earth, mars, mercury, venus, jupyter, saturn, uranus, neptune]
-
-
-
 
 def main():
     start = False
     run = True
-
 
     clock = pygame.time.Clock()
     while run:
@@ -164,22 +135,13 @@ def main():
         WIN.fill((0, 0, 0))
         
         for event in pygame.event.get():
-           
-
             #create the planets
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 start = True
                 sp = event.pos
-
-            
-
             elif event.type == pygame.MOUSEMOTION:
                 if start == True and event.type:
-
-
                     pos = event.pos
-
-
                     width = pos[0] - sp[0]
 
                     pygame.draw.circle(WIN, GRAY, (sp[0], sp[1]), width / 2)
@@ -187,13 +149,7 @@ def main():
                     S = (4 * math.pi) * (((width / 2 * Planet.AU) / 10000000)) ** 2
 
                     mass = (1880) * S**2
-
-
-
-
-
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                
                 x = (((WIDTH / 2) - sp[0]) / Planet.SCALE) 
                 y = (((HEIGHT / 2) - sp[1]) / Planet.SCALE) 
 
@@ -206,8 +162,6 @@ def main():
 
                 start = False
 
-
-
             #TIME
             increases_speed_of_time = pygame.key.get_pressed()
 
@@ -217,43 +171,30 @@ def main():
             if decreases_speed_of_time[pygame.K_z] and (Planet.TIMESTEP) > 0:
                 Planet.TIMESTEP /= 2
 
-
             #ORBITAL
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_o and Planet.Lines is True:
-                    Planet.Lines = False
-                    
-                elif event.key == pygame.K_o and Planet.Lines is False:
-                    Planet.Lines = True  
-                    
+                if event.key == pygame.K_o and Planet.LINES is True:
+                    Planet.LINES = False                    
+                elif event.key == pygame.K_o and Planet.LINES is False:
+                    Planet.LINES = True  
+
             #ZOOM
             if event.type == pygame.MOUSEWHEEL:
                 if event.y == 1:
-                    Planet.Decrease *= 2
+                    Planet.DECREASE *= 2
                     Planet.SCALE *= 2
                 else:
-                    Planet.Decrease /= 2
+                    Planet.DECREASE /= 2
                     Planet.SCALE /= 2
             if event.type == pygame.QUIT:
                 run = False
 
-        
-        
-
         for planet in Planets.planets:
             planet.update_position(Planets.planets)
             planet.draw(WIN)
-
-        
-
 
         pygame.display.update()
 
     pygame.quit()
     
 main()
-
-
-
-
-
