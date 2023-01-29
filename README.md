@@ -28,7 +28,7 @@ to create a planet you need to press left mouse button
 to zoom you need spin mouse wheel
 
 
-If you want change limit of allowed objects just change the variable
+If you want change limit of allowed lines just change the variable
 
 ![image](https://user-images.githubusercontent.com/105744368/215286620-a47a8757-0151-4cfa-827c-cd28686936b0.png)
 
