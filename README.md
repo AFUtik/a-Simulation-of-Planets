@@ -1,7 +1,9 @@
 # a-Simulation-of-Planets
 In order to run this project you need module Pygame how to install this module is written below
 
-![image](https://user-images.githubusercontent.com/105744368/215285758-0296c5ba-ab62-4081-89a2-355b424e8e64.png)
+‘‘‘shell
+pip install pygame
+‘‘‘
 
 
 Next, What you can do in the project you can
