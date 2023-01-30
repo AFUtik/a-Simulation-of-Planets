@@ -17,7 +17,7 @@ so, you need to know hotkeys:
 
 If you want change limit of allowed lines just change the variable
 ```py
-your_limit = 300
+your_limit = 3000
 ```
 or you want to add a planet to the solar system find class Planets and create Planet after that add the variable to the list   
 
