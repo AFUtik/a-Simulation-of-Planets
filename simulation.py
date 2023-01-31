@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 from typing import Tuple
 
 pygame.init()
@@ -128,10 +129,10 @@ def main():
     start = False
     run = True
     clock = pygame.time.Clock()
+    color = (58, 54, 60)
     while run:
         clock.tick(60)
         WIN.fill((0, 0, 0))
-        
         for event in pygame.event.get():
             #Movement of camera
             mousewheel = pygame.mouse.get_pressed()
@@ -143,13 +144,15 @@ def main():
                 Planet.MOVE[1] += rel1[1] / Planet.DECREASE
 
             #create the planets
-            pressed = pygame.mouse.get_pressed()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 start = True
                 sp = event.pos
-            elif event.type == pygame.MOUSEMOTION or pressed[0]:
+            elif event.type == pygame.MOUSEMOTION:
                 if start == True:
-                    pos = event.pos
+                    try:
+                        pos = event.pos
+                    except:
+                        pass
                     width = pos[0] - sp[0]
 
                     #Calculating of mass
@@ -161,7 +164,7 @@ def main():
                 x = (((WIDTH / 2) - (sp[0] - Planet.MOVE[0] * Planet.DECREASE)) / Planet.SCALE)
                 y = (((HEIGHT / 2) - (sp[1] - Planet.MOVE[1] * Planet.DECREASE)) / Planet.SCALE)
 
-                your_planet = Planet(-x, -y, width / 2, GRAY, mass)
+                your_planet = Planet(-x, -y, width / 2, color, mass)
 
                 your_planet.x_vel = 23.1 * 1000
                 your_planet.y_vel = 3.1 * 1000
@@ -169,14 +172,16 @@ def main():
                 Planets.planets.append(your_planet)
 
                 start = False
+            #COLORS
+            color_key = pygame.key.get_pressed()
+            if color_key[pygame.K_TAB]:
+                color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
             #TIME
-            increases_speed_of_time = pygame.key.get_pressed()
-
-            decreases_speed_of_time = pygame.key.get_pressed()
-            if increases_speed_of_time[pygame.K_x] and (Planet.TIMESTEP) < (4 * 3600*24):
+            speed_of_time = pygame.key.get_pressed()
+            if speed_of_time[pygame.K_x] and (Planet.TIMESTEP) < (4 * 3600*24):
                 Planet.TIMESTEP *= 2
-            if decreases_speed_of_time[pygame.K_z] and (Planet.TIMESTEP) > 0:
+            elif speed_of_time[pygame.K_z] and (Planet.TIMESTEP) > 0:
                 Planet.TIMESTEP /= 2
 
             #ORBITAL
@@ -200,9 +205,9 @@ def main():
         for planet in Planets.planets:
             planet.update_position(Planets.planets)
             planet.draw(WIN)
-        if pressed[0] and start == True:
+        if start == True:
             try:
-                pygame.draw.circle(WIN, GRAY, (sp[0], sp[1]),width / 2 * Planet.DECREASE)
+                pygame.draw.circle(WIN, color, (sp[0], sp[1]),width / 2 * Planet.DECREASE)
             except:
                 pass
         pygame.display.update()
