@@ -1,10 +1,8 @@
 import pygame
 import math
-
 from typing import Tuple
 
 pygame.init()
-
 
 WIDTH, HEIGHT =  1980, 1080
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -21,7 +19,6 @@ LIGHT_BLUE = (62, 142, 182)
 DEEP_BLUE = (62, 63, 190)
 GRAY = (58, 54, 60)
 
-
 class Planet:
     G = 6.67428e-11
     AU = 149.6e6 * 1000
@@ -29,7 +26,8 @@ class Planet:
     SCALE = 150 / AU
     DECREASE = 1
     LINES = True
-    YOUR_LIMIT = 3000
+    YOUR_LIMIT = 1000
+    MOVE = [0, 0]
 
     def __init__(self, x: float, y: float, radius: int, color: Tuple[int, int, int], mass: float):
         self.color = color
@@ -39,7 +37,6 @@ class Planet:
         self.y = y
         self.orbit = []
         self.sun = False
-
         self.x_vel = 0
         self.y_vel = 0
 
@@ -51,19 +48,19 @@ class Planet:
             updated_points = []
             for point in self.orbit:
                 x, y = point
-
                 x = (x * self.SCALE + WIDTH / 2)
                 y = (y * self.SCALE + HEIGHT / 2)
 
-                updated_points.append((x, y))  
+                updated_points.append((x + Planet.MOVE[0] * Planet.DECREASE, y + Planet.MOVE[1] * Planet.DECREASE))  
 
                 if len(updated_points) > Planet.YOUR_LIMIT:
                     del updated_points[0:Planet.YOUR_LIMIT - 2]
-
+                    self.orbit.clear()
+                
             if len(updated_points) < Planet.YOUR_LIMIT:
                 pygame.draw.lines(win, self.color, False, updated_points, 1)
-
-        pygame.draw.circle(win, self.color, (x, y), self.radius * Planet.DECREASE)
+            
+        pygame.draw.circle(win, self.color, (x + Planet.MOVE[0] * Planet.DECREASE, y + Planet.MOVE[1] * Planet.DECREASE), self.radius * Planet.DECREASE)
 
     def attraction(self, other):
         other_x, other_y = other.x, other.y
@@ -77,7 +74,7 @@ class Planet:
         force_y = math.sin(theta) * force
         return force_x, force_y
 
-    def update_position(self, planets):
+    def update_position(self, planets : tuple):
         total_fx = total_fy = 0
         for planet in planets:
             if self == planet:
@@ -87,13 +84,15 @@ class Planet:
             total_fx += fx
             total_fy += fy
 
+        if self.mass == 0:
+            self.mass = 1
+
         self.x_vel += total_fx / self.mass * self.TIMESTEP
         self.y_vel += total_fy / self.mass * self.TIMESTEP
 
         self.x += self.x_vel * self.TIMESTEP
         self.y += self.y_vel * self.TIMESTEP
         self.orbit.append((self.x, self.y))
-
 
 class Planets:
     sun = Planet(0, 0, 30, YELLOW, 1.98892*10**30)
@@ -128,30 +127,40 @@ class Planets:
 def main():
     start = False
     run = True
-
     clock = pygame.time.Clock()
     while run:
         clock.tick(60)
         WIN.fill((0, 0, 0))
         
         for event in pygame.event.get():
+            #Movement of camera
+            mousewheel = pygame.mouse.get_pressed()
+            rel1 = pygame.mouse.get_rel(0, 0)
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 2:
+                rel1 = (0, 0)
+            elif mousewheel[1]:
+                Planet.MOVE[0] += rel1[0] / Planet.DECREASE
+                Planet.MOVE[1] += rel1[1] / Planet.DECREASE
+
             #create the planets
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 start = True
                 sp = event.pos
             elif event.type == pygame.MOUSEMOTION:
-                if start == True and event.type:
+                if start == True:
                     pos = event.pos
                     width = pos[0] - sp[0]
 
-                    pygame.draw.circle(WIN, GRAY, (sp[0], sp[1]), width / 2)
-
-                    S = (4 * math.pi) * (((width / 2 * Planet.AU) / 10000000)) ** 2
-
+                    #Calculating of mass
+                    S = (4 * math.pi) * ((((width / 2 * Planet.AU) ) / 10000000)) ** 2
                     mass = (1880) * S**2
+
+                    pygame.draw.circle(WIN, GRAY, (sp[0], sp[1]),width / 2 * Planet.DECREASE)
+
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                x = (((WIDTH / 2) - sp[0]) / Planet.SCALE) 
-                y = (((HEIGHT / 2) - sp[1]) / Planet.SCALE) 
+
+                x = (((WIDTH / 2) - (sp[0] - Planet.MOVE[0] * Planet.DECREASE)) / Planet.SCALE)
+                y = (((HEIGHT / 2) - (sp[1] - Planet.MOVE[1] * Planet.DECREASE)) / Planet.SCALE)
 
                 your_planet = Planet(-x, -y, width / 2, GRAY, mass)
 
