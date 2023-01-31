@@ -143,10 +143,11 @@ def main():
                 Planet.MOVE[1] += rel1[1] / Planet.DECREASE
 
             #create the planets
+            pressed = pygame.mouse.get_pressed()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 start = True
                 sp = event.pos
-            elif event.type == pygame.MOUSEMOTION:
+            elif event.type == pygame.MOUSEMOTION or pressed[0]:
                 if start == True:
                     pos = event.pos
                     width = pos[0] - sp[0]
@@ -154,8 +155,6 @@ def main():
                     #Calculating of mass
                     S = (4 * math.pi) * ((((width / 2 * Planet.AU) ) / 10000000)) ** 2
                     mass = (1880) * S**2
-
-                    pygame.draw.circle(WIN, GRAY, (sp[0], sp[1]),width / 2 * Planet.DECREASE)
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
 
@@ -201,7 +200,11 @@ def main():
         for planet in Planets.planets:
             planet.update_position(Planets.planets)
             planet.draw(WIN)
-
+        if pressed[0] and start == True:
+            try:
+                pygame.draw.circle(WIN, GRAY, (sp[0], sp[1]),width / 2 * Planet.DECREASE)
+            except:
+                pass
         pygame.display.update()
 
     pygame.quit()
