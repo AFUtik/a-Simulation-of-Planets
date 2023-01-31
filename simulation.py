@@ -134,6 +134,11 @@ def main():
         clock.tick(60)
         WIN.fill((0, 0, 0))
         for event in pygame.event.get():
+            #Exit
+            escape = pygame.key.get_pressed()
+            if escape[pygame.K_ESCAPE]:
+                run = False
+
             #Movement of camera
             mousewheel = pygame.mouse.get_pressed()
             rel1 = pygame.mouse.get_rel(0, 0)
