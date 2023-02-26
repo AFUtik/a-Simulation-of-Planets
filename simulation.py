@@ -188,21 +188,21 @@ def main():
                 Planet.TIMESTEP /= 2
 
             #ORBITAL
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_o and Planet.LINES is True:
                     Planet.LINES = False                    
                 elif event.key == pygame.K_o and Planet.LINES is False:
                     Planet.LINES = True  
 
             #ZOOM
-            if event.type == pygame.MOUSEWHEEL:
+            elif event.type == pygame.MOUSEWHEEL:
                 if event.y == 1:
                     Planet.DECREASE *= 2
                     Planet.SCALE *= 2
                 else:
                     Planet.DECREASE /= 2
                     Planet.SCALE /= 2
-            if event.type == pygame.QUIT:
+            elif event.type == pygame.QUIT:
                 run = False
 
         for planet in Planets.planets:
