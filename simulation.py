@@ -134,19 +134,18 @@ def main():
         clock.tick(60)
         WIN.fill((0, 0, 0))
         for event in pygame.event.get():
-            #Exit
-            escape = pygame.key.get_pressed()
-            if escape[pygame.K_ESCAPE]:
-                run = False
-
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    
             #Movement of camera
             mousewheel = pygame.mouse.get_pressed()
-            rel1 = pygame.mouse.get_rel(0, 0)
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 2:
-                rel1 = (0, 0)
+            rel = pygame.mouse.get_rel()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 2: 
+                rel = (0, 0)
             elif mousewheel[1]:
-                Planet.MOVE[0] += rel1[0] / Planet.DECREASE
-                Planet.MOVE[1] += rel1[1] / Planet.DECREASE
+                Planet.MOVE[0] += rel[0] / Planet.DECREASE
+                Planet.MOVE[1] += rel[1] / Planet.DECREASE
 
             #create the planets
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -165,7 +164,6 @@ def main():
                     mass = (1880) * S**2
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-
                 x = (((WIDTH / 2) - (sp[0] - Planet.MOVE[0] * Planet.DECREASE)) / Planet.SCALE)
                 y = (((HEIGHT / 2) - (sp[1] - Planet.MOVE[1] * Planet.DECREASE)) / Planet.SCALE)
 

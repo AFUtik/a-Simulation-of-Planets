@@ -13,7 +13,9 @@ so, you need to know hotkeys:
 * X - Increases time speed
 * O - Turn on the orbit and turn off the orbit                                   
 * LMB - create a planet
+* TAB - changes a color of planet when you creating a planet   
 * Mouse wheel - zoom
+* Mouse wheel button - moves the camera 
 
 If you want change limit of allowed lines just change the variable
 ```py
