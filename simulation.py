@@ -42,27 +42,27 @@ class Planet:
         self.y_vel = 0
 
     def draw(self, win: pygame.Surface):
-        x = self.x * self.SCALE + WIDTH / 2
-        y = self.y * self.SCALE + HEIGHT / 2
+        x = (self.x * self.SCALE + WIDTH / 2) + self.MOVE[0] * self.DECREASE
+        y = (self.y * self.SCALE + HEIGHT / 2) + self.MOVE[1] * self.DECREASE
 
         if len(self.orbit) > 2 and Planet.LINES == True: 
             updated_points = []
             for point in self.orbit:
                 x, y = point
-                x = (x * self.SCALE + WIDTH / 2)
-                y = (y * self.SCALE + HEIGHT / 2)
+                x = (x * self.SCALE + WIDTH / 2) + self.MOVE[0] * self.DECREASE
+                y = (y * self.SCALE + HEIGHT / 2) + self.MOVE[1] * self.DECREASE
 
-                updated_points.append((x + Planet.MOVE[0] * Planet.DECREASE, y + Planet.MOVE[1] * Planet.DECREASE))  
+                updated_points.append((x, y))  
 
-                if len(updated_points) > Planet.YOUR_LIMIT:
-                    del updated_points[0:Planet.YOUR_LIMIT - 2]
-                    self.orbit.clear()
+            if len(updated_points) > self.YOUR_LIMIT:
+                del updated_points[0:self.YOUR_LIMIT - 2]
+                self.orbit.clear()
                 
-            if len(updated_points) < Planet.YOUR_LIMIT:
+            else:
                 pygame.draw.lines(win, self.color, False, updated_points, 1)
             
-        pygame.draw.circle(win, self.color, (x + Planet.MOVE[0] * Planet.DECREASE, y + Planet.MOVE[1] * Planet.DECREASE), self.radius * Planet.DECREASE)
-
+        pygame.draw.circle(win, self.color, (x, y), self.radius * self.DECREASE)
+    
     def attraction(self, other):
         other_x, other_y = other.x, other.y
         distance_x = other_x - self.x
@@ -84,10 +84,7 @@ class Planet:
             fx, fy = self.attraction(planet)
             total_fx += fx
             total_fy += fy
-
-        if self.mass == 0:
-            self.mass = 1
-
+            
         self.x_vel += total_fx / self.mass * self.TIMESTEP
         self.y_vel += total_fy / self.mass * self.TIMESTEP
 
@@ -95,7 +92,7 @@ class Planet:
         self.y += self.y_vel * self.TIMESTEP
         self.orbit.append((self.x, self.y))
 
-class Planets:
+def main():
     sun = Planet(0, 0, 30, YELLOW, 1.98892*10**30)
     sun.sun = True
     
@@ -125,7 +122,6 @@ class Planets:
     
     planets = [sun, earth, mars, mercury, venus, jupyter, saturn, uranus, neptune]
 
-def main():
     start = False
     run = True
     clock = pygame.time.Clock()
@@ -159,20 +155,19 @@ def main():
                         pass
                     width = pos[0] - sp[0]
 
-                    #Calculating of mass
-                    S = (4 * math.pi) * ((((width / 2 * Planet.AU) ) / 10000000)) ** 2
+                    S = (4 * math.pi) * ((width / 2 * Planet.AU ) / 10000000) ** 2
                     mass = (1880) * S**2
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                x = (((WIDTH / 2) - (sp[0] - Planet.MOVE[0] * Planet.DECREASE)) / Planet.SCALE)
-                y = (((HEIGHT / 2) - (sp[1] - Planet.MOVE[1] * Planet.DECREASE)) / Planet.SCALE)
+                x = -(WIDTH / 2 - (sp[0] - Planet.MOVE[0] * Planet.DECREASE)) / Planet.SCALE
+                y = -(HEIGHT / 2 - (sp[1] - Planet.MOVE[1] * Planet.DECREASE)) / Planet.SCALE
 
-                your_planet = Planet(-x, -y, width / 2, color, mass)
+                your_planet = Planet(x, y, width / 2, color, mass)
 
                 your_planet.x_vel = 23.1 * 1000
                 your_planet.y_vel = 3.1 * 1000
 
-                Planets.planets.append(your_planet)
+                planets.append(your_planet)
 
                 start = False
             #COLORS
@@ -205,16 +200,15 @@ def main():
             elif event.type == pygame.QUIT:
                 run = False
 
-        for planet in Planets.planets:
-            planet.update_position(Planets.planets)
-            planet.draw(WIN)
         if start == True:
-            try:
-                pygame.draw.circle(WIN, color, (sp[0], sp[1]),width / 2 * Planet.DECREASE)
-            except:
-                pass
+                pygame.draw.circle(WIN, color, (sp[0], sp[1]), width / 2 * Planet.DECREASE)
+
+        for planet in planets:
+            planet.update_position(planets)
+            planet.draw(WIN)
         pygame.display.update()
 
     pygame.quit()
     
-main()
+if __name__ == "__main__":
+    main()
