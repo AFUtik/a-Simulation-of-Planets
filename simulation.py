@@ -45,7 +45,7 @@ class Planet:
         x = (self.x * self.SCALE + WIDTH / 2) + self.MOVE[0] * self.DECREASE
         y = (self.y * self.SCALE + HEIGHT / 2) + self.MOVE[1] * self.DECREASE
 
-        if len(self.orbit) > 2 and Planet.LINES == True: 
+        if len(self.orbit) > 2 and self.LINES == True: 
             updated_points = []
             for point in self.orbit:
                 x, y = point
@@ -132,7 +132,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
+                    run = False
                     
             #Movement of camera
             mousewheel = pygame.mouse.get_pressed()
@@ -144,19 +144,17 @@ def main():
                 Planet.MOVE[1] += rel[1] / Planet.DECREASE
 
             #create the planets
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 start = True
                 sp = event.pos
+                width = 1
             elif event.type == pygame.MOUSEMOTION:
-                if start == True:
-                    try:
-                        pos = event.pos
-                    except:
-                        pass
+                if start:
+                    pos = event.pos
                     width = pos[0] - sp[0]
 
-                    S = (4 * math.pi) * ((width / 2 * Planet.AU ) / 10000000) ** 2
-                    mass = (1880) * S**2
+                    S = (4 * math.pi) * (width * Planet.AU)
+                    mass = 8 * S ** 2
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 x = -(WIDTH / 2 - (sp[0] - Planet.MOVE[0] * Planet.DECREASE)) / Planet.SCALE
@@ -170,24 +168,22 @@ def main():
                 planets.append(your_planet)
 
                 start = False
-            #COLORS
-            color_key = pygame.key.get_pressed()
-            if color_key[pygame.K_TAB]:
-                color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
-            #TIME
-            speed_of_time = pygame.key.get_pressed()
-            if speed_of_time[pygame.K_x] and (Planet.TIMESTEP) < (4 * 3600*24):
-                Planet.TIMESTEP *= 2
-            elif speed_of_time[pygame.K_z] and (Planet.TIMESTEP) > 0:
-                Planet.TIMESTEP /= 2
-
-            #ORBITAL
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_o and Planet.LINES is True:
-                    Planet.LINES = False                    
-                elif event.key == pygame.K_o and Planet.LINES is False:
-                    Planet.LINES = True  
+                if event.key == pygame.K_TAB:
+                    color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+           
+                elif event.key == pygame.K_x and Planet.TIMESTEP < (4 * 3600*24):
+                    Planet.TIMESTEP *= 2
+
+                elif event.key == pygame.K_z and Planet.TIMESTEP > 0:
+                    Planet.TIMESTEP /= 2
+
+                elif event.key == pygame.K_o:
+                    if Planet.LINES:
+                        Planet.LINES = False                    
+                    else:
+                        Planet.LINES = True  
 
             #ZOOM
             elif event.type == pygame.MOUSEWHEEL:
@@ -200,8 +196,8 @@ def main():
             elif event.type == pygame.QUIT:
                 run = False
 
-        if start == True:
-                pygame.draw.circle(WIN, color, (sp[0], sp[1]), width / 2 * Planet.DECREASE)
+        if start:
+                pygame.draw.circle(WIN, color, sp, width / 2 * Planet.DECREASE)
 
         for planet in planets:
             planet.update_position(planets)
