@@ -159,7 +159,7 @@ def main():
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_TAB:
-                    color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+                    color = tuple(random.randint(0, 255) for _ in range(3))
            
                 elif event.key == pygame.K_x and Planet.TIMESTEP < (4 * 3600*24):
                     Planet.TIMESTEP *= 2
